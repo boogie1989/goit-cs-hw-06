@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    mongodb:
+        image: mongo
+        container_name: my-mongodb
+        restart: always
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodb_data:/data/db
+
+    app:
+        build: .
+        container_name: app
+        restart: always
+        depends_on:
+            - mongodb
+        environment:
+            - MONGO_URI=mongodb://mongodb:27017/mydatabase
+        ports:
+            - "80:${HTTP_SERVER_PORT}"
+            - "${SOCKET_SERVER_PORT}:${SOCKET_SERVER_PORT}"
+        env_file:
+            - .env
+
+volumes:
+    mongodb_data:
